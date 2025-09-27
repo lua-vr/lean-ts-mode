@@ -1,0 +1,7 @@
+name = "plugin"
+version = "0.1.0"
+defaultTargets = ["ServerPlugin"]
+
+[[lean_lib]]
+name = "ServerPlugin"
+defaultFacets = ["shared"]

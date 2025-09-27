@@ -25,16 +25,24 @@
 ;;; Code:
 
 (require 'eglot)
-(require 'eglot-semtok)
+(require 'lean-ts-data)
+
+(defvar lean-ts-server-plugin-path
+  (expand-file-name "libServerPlugin.so"
+                    lean-ts-data-directory)
+  "Path for the server plugin.")
 
 ;; Eglot subclass definition
-(defclass lean-ts-eglot-server (eglot-semtok-server) ()
+(defclass lean-ts-eglot-server (eglot-lsp-server) ()
   :documentation "Lean server class for Eglot.")
 
 ;; Setup Eglot
 (add-hook 'lean-ts-mode-hook #'eglot-ensure)
-(add-to-list 'eglot-server-programs '(lean-ts-mode lean-ts-eglot-server "lake" "serve"))
-(add-to-list 'eglot-semtok-faces '("leanSorryLike" . font-lock-warning-face))
+(add-to-list 'eglot-server-programs
+             `(lean-ts-mode lean-ts-eglot-server "lake" "serve"))
+                            ;; ,@(when lean-ts-server-plugin-path
+                            ;;     (list "--" "--plugin" lean-ts-server-plugin-path))))
+(add-to-list 'eglot-semantic-tokens-faces '("leanSorryLike" . font-lock-warning-face))
 
 ;; Commands (requests)
 (defun lean-ts-restart-file ()

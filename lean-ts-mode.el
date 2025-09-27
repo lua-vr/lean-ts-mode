@@ -6,7 +6,7 @@
 ;; Maintainer: Lua <me@lua.blog.br>
 ;; Created: 2025
 ;; Version: 1.0
-;; Package-Requires: ((emacs "27.1") (eglot "1.15") (eglot-semtok) (simple-httpd "1.5.1") (websocket "1.15"))
+;; Package-Requires: ((emacs "27.1") (eglot "1.18") (simple-httpd "1.5.1") (websocket "1.15"))
 ;; URL: https://github.com/estradilua/lean-ts-mode
 ;; Keywords: languages
 
@@ -31,6 +31,7 @@
 
 (require 'lean-ts-syntax)
 (require 'lean-ts-server)
+(require 'lean-ts-infoview)
 (require 'treesit)
 
 (defgroup lean-ts nil
@@ -112,10 +113,8 @@ Invokes `lean-ts-mode-hook'."
   (add-to-list (make-local-variable 'project-find-functions) #'lean-ts--toolchain-project 'append)
 
   (require 'lean-ts-input)
-  (set-input-method "Lean"))
-
-  ;; Infoview
-  ;; (add-hook 'eldoc-documentation-functions #'lean4-infoview--send-location t t))
+  (set-input-method "Lean")
+  (add-hook 'eldoc-documentation-functions #'lean-ts-infoview--send-location 'append t))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.lean\\'" . lean-ts-mode))

@@ -41,6 +41,7 @@
 (require 'cl-lib)
 (require 'subr-x)
 (require 'map)
+(require 'lean-ts-data)
 
 ;; Quail is quite stateful, so be careful when editing this code.  Note
 ;; that with-temp-buffer is used below whenever buffer-local state is
@@ -178,12 +179,6 @@ order for the change to take effect."
   :type '(repeat (cons (string :tag "Quail package")
                        (sexp :tag "Tweaking function"))))
 
-(defcustom lean-ts-input-data-directory
-  (expand-file-name "data/" (file-name-directory (or load-file-name (buffer-file-name))))
-  "Directory in which translations.json resides."
-  :group 'lean-ts-input
-  :type 'directory)
-
 (defcustom lean-ts-input-user-translations nil
   "A list of translations specific to the Lean input method.
 Each element is a pair (KEY-SEQUENCE-STRING . LIST-OF-TRANSLATION-STRINGS).
@@ -275,7 +270,7 @@ tasks as well."
   (with-temp-buffer
     (insert-file-contents (expand-file-name
                            "abbreviations.json"
-                           lean-ts-input-data-directory))
+                           lean-ts-data-directory))
     (thread-last
       (let ((json-key-type 'string)) ;; make sure json key is a string.
         ;; Prefer emacs native support implemented in C (since 27.1).
