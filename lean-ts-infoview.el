@@ -284,6 +284,8 @@
     (with-current-buffer (find-file-noselect (eglot-uri-to-path uri))
       (eglot-reconnect (eglot-current-server)))))
 
+(defvar lean-ts-infoview--teardown-alist nil)
+
 (cl-defmethod lean-ts-infoview--dispatcher
   (conn (_ (eql createRpcSession)) params)
   (cl-destructuring-bind (&key uri) params
@@ -302,7 +304,15 @@
                                            (list :uri uri
                                                  :sessionId session-id))))))
         (push (cons session-id keepalive) (oref conn rpc-sessions))
+        (push (lambda () (lean-ts-infoview--dispatcher conn 'closeRpcSession
+                                                       (list :sessionId session-id)))
+              (alist-get server lean-ts-infoview--teardown-alist))
         session-id))))
+
+(cl-defmethod jsonrpc-shutdown ((server lean-ts-eglot-server) &optional cleanup)
+  (when-let* ((actions (alist-get server lean-ts-infoview--teardown-alist)))
+    (mapc #'funcall actions))
+  (cl-call-next-method server cleanup))
 
 (cl-defmethod lean-ts-infoview--dispatcher
   (conn (_ (eql closeRpcSession)) params)
@@ -360,6 +370,7 @@
 (defvar infoview-httpd-server nil)
 
 (defun lean-ts-infoview-serve ()
+  (interactive)
   (httpd-serve-directory
    (expand-file-name "infoview" lean-ts-data-directory)))
 
