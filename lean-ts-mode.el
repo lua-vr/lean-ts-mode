@@ -52,9 +52,11 @@ big performance improvement unless you are debugging the server.")
   (treesit-font-lock-rules
    :default-language 'lean
 
-   :feature 'keyword
-   `(["prelude" "import" "include" "export" "open" "mutual"]
-     @font-lock-keyword-face))
+   :feature 'comment
+   `([(comment) (line_comment)]
+     @font-lock-comment-face
+     [(cmd_module_doc) (documentation)]
+     @font-lock-doc-face))
   "The tree-sitter font lock settings for lean.")
 
 (defun lean-ts--eglot-project (initial)
@@ -114,7 +116,12 @@ Invokes `lean-ts-mode-hook'."
 
   (require 'lean-ts-input)
   (set-input-method "Lean")
-  (add-hook 'eldoc-documentation-functions #'lean-ts-infoview--send-location 'append t))
+  (add-hook 'eldoc-documentation-functions #'lean-ts-infoview--send-location 'append t)
+
+  (setq treesit-primary-parser (treesit-parser-create 'lean))
+  (setq-local treesit-font-lock-settings lean-ts-font-lock)
+  (setq-local treesit-font-lock-feature-list '((comment)))
+  (treesit-major-mode-setup))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.lean\\'" . lean-ts-mode))
