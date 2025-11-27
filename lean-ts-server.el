@@ -42,7 +42,12 @@
              `(lean-ts-mode lean-ts-eglot-server "lake" "serve"))
                             ;; ,@(when lean-ts-server-plugin-path
                             ;;     (list "--" "--plugin" lean-ts-server-plugin-path))))
-(add-to-list 'eglot-semantic-tokens-faces '("leanSorryLike" . font-lock-warning-face))
+(add-to-list 'eglot-semantic-token-types "leanSorryLike")
+
+(defface eglot-semantic-leanSorryLike-face
+  '((t (:inherit font-lock-warning-face)))
+  "Face for painting a `leanSorryLike' LSP semantic token."
+  :group 'eglot-semantic-fontification)
 
 ;; Commands (requests)
 (defun lean-ts-restart-file ()
