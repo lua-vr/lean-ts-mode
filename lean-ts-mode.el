@@ -75,8 +75,7 @@ of the parent project."
         (while-let ((_   (string-match ".lake/packages/[^/]+\\'" root))
                     (dir (directory-file-name root))
                     (new (locate-dominating-file dir "lean-toolchain")))
-          ;; We found a toolchain file, but maybe it belongs to a package.
-          ;; Continue looking until there are no more toolchain files.
+          ;; We found a toolchain file, but it belongs to a package.
           (setq root new))))
     (when root (cons 'lean4 root))))
 
