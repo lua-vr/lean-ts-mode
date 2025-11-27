@@ -36,7 +36,7 @@
   (let* ((default-directory (project-root (project-current t)))
          (command (concat lean-ts-lake-command " " args)))
     (if default-directory
-        (compilation-start command))))
+        (compilation-start command t))))
 
 (defun lean-ts-lake-build ()
   "Run `lake build` in the project root."
