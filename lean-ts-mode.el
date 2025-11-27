@@ -71,11 +71,7 @@ of the parent project."
     (when-let* ((eglot-lsp-context) (file-name initial))
       (if (string-match "\\`\\(.*/toolchains/[^/]*/src/lean\\)/.*\\'" initial)
           (setq root (match-string 1 initial))
-        (while-let ((dir (locate-dominating-file file-name "lean-toolchain")))
-          ;; We found a toolchain file, but maybe it belongs to a package.
-          ;; Continue looking until there are no more toolchain files.
-          (setq root dir
-                file-name (file-name-directory (directory-file-name dir))))))
+        (setq root (locate-dominating-file file-name "lean-toolchain"))))
     (when root (cons 'lean4 root))))
 
 (defun lean-ts--toolchain-project (initial)
