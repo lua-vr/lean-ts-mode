@@ -68,10 +68,16 @@ directory hierarchy for a directory containing a file
 This allows us to edit files in child packages using the settings
 of the parent project."
   (let (root)
-    (when-let* ((eglot-lsp-context) (file-name initial))
+    (when-let* ((_ eglot-lsp-context))
       (if (string-match "\\`\\(.*/toolchains/[^/]*/src/lean\\)/.*\\'" initial)
           (setq root (match-string 1 initial))
-        (setq root (locate-dominating-file file-name "lean-toolchain"))))
+        (setq root (locate-dominating-file initial "lean-toolchain"))
+        (while-let ((_   (string-match ".lake/packages/[^/]+\\'" root))
+                    (dir (directory-file-name root))
+                    (new (locate-dominating-file dir "lean-toolchain")))
+          ;; We found a toolchain file, but maybe it belongs to a package.
+          ;; Continue looking until there are no more toolchain files.
+          (setq root new))))
     (when root (cons 'lean4 root))))
 
 (defun lean-ts--toolchain-project (initial)
