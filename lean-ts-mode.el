@@ -32,6 +32,9 @@
 (require 'lean-ts-syntax)
 (require 'lean-ts-server)
 (require 'lean-ts-infoview)
+(require 'lean-ts-lake)
+(require 'lean-ts-mathlib)
+(require 'lean-ts-loogle)
 (require 'treesit)
 
 (defgroup lean-ts nil

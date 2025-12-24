@@ -33,7 +33,8 @@
   (interactive)
   (let ((server (eglot-current-server)))
     (eglot-shutdown server)
-    (call-interactively #'magit-checkout)))
+    (call-interactively #'magit-checkout)
+    (lean-ts-lake-cache-get)))
 
 
 (provide 'lean-ts-mathlib)
