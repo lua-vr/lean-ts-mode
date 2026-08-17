@@ -95,6 +95,13 @@
                (lambda (e) (jsonrpc--reply connection id method :error e)))
     (apply #'cl-call-next-method connection args)))
 
+;; HACK, FIXME: `json-serialize' hardcodes a limit of 50 depth levels,
+;; which is not enough for some Lean responses. If emacs-devel does
+;; not change this, we need to make eglot--request use `json-encode'
+;; instead.
+(defvar lean-ts-infoview--use-encode nil
+  "Dynamically non-nil to use `lean-ts-infoview--json-encode'.")
+
 (cl-defmethod jsonrpc-connection-send ((connection lean-ts-infoview--connection)
                                        &rest args
                                        &key
@@ -168,13 +175,6 @@
   (setq lean-ts-infoview--connections
         (cl-delete socket lean-ts-infoview--connections
                    :key (lambda (i) (oref i socket)))))
-
-;; HACK, FIXME: `json-serialize' hardcodes a limit of 50 depth levels,
-;; which is not enough for some Lean responses. If emacs-devel does
-;; not change this, we need to make eglot--request use `json-encode'
-;; instead.
-(defvar lean-ts-infoview--use-encode nil
-  "Dynamically non-nil to use `lean-ts-infoview--json-encode'.")
 
 (advice-add 'jsonrpc--json-encode :around
             (defun lean-ts-infoview--json-encode (f obj)
@@ -296,17 +296,21 @@
                                                      :$/lean/rpc/connect
                                                      (list :uri uri))
                                     :sessionId))
+             (teardown (lambda ()
+                         (lean-ts-infoview--dispatcher
+                          conn 'closeRpcSession
+                          (list :sessionId session-id))))
              (keepalive (run-with-timer
                          10 10
                          (lambda ()
-                           (jsonrpc-notify server
-                                           :$/lean/rpc/keepAlive
-                                           (list :uri uri
-                                                 :sessionId session-id))))))
+                           (condition-case _err
+                               (jsonrpc-notify server
+                                               :$/lean/rpc/keepAlive
+                                               (list :uri uri
+                                                     :sessionId session-id))
+                             (jsonrpc-error (funcall teardown)))))))
         (push (cons session-id keepalive) (oref conn rpc-sessions))
-        (push (lambda () (lean-ts-infoview--dispatcher conn 'closeRpcSession
-                                                       (list :sessionId session-id)))
-              (alist-get server lean-ts-infoview--teardown-alist))
+        (push teardown (alist-get server lean-ts-infoview--teardown-alist))
         session-id))))
 
 (cl-defmethod jsonrpc-shutdown ((server lean-ts-eglot-server) &optional cleanup)
@@ -379,11 +383,16 @@
 (define-minor-mode lean-ts-infoview-mode
   "Infoview server for Lean 4."
   :global t :group 'lean-ts-infoview
-  (if lean-ts-infoview-mode
-      (lean-ts-infoview--start-server)
+  (cond
+   (lean-ts-infoview-mode
+    (lean-ts-infoview-serve)
+    (lean-ts-infoview--start-server))
+   (t
     (when lean-ts-infoview--server
       (websocket-server-close lean-ts-infoview--server)
-      (setq lean-ts-infoview--server nil))))
+      (setq lean-ts-infoview--server nil)))))
+
+;; (remove-hook 'lean-ts-mode-hook #'lean-ts-infoview-mode)
 
 (provide 'lean-ts-infoview)
 ;;; lean-ts-infoview.el ends here

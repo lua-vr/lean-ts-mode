@@ -1,17 +1,18 @@
 {"synthetic": false,
- "outputs": "15028474879969484019",
+ "schemaVersion": "2025-09-10",
+ "outputs": "eba8c16befb9da3d.o",
  "log":
  [{"message":
-   ".> /home/lua/.elan/toolchains/leanprover--lean4-nightly---nightly-2025-09-23/bin/clang -c -o /home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c.o.export /home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c -I /home/lua/.elan/toolchains/leanprover--lean4-nightly---nightly-2025-09-23/include -fstack-clash-protection -fwrapv -fPIC -fvisibility=hidden -Wno-unused-command-line-argument --sysroot /home/lua/.elan/toolchains/leanprover--lean4-nightly---nightly-2025-09-23 -nostdinc -isystem /home/lua/.elan/toolchains/leanprover--lean4-nightly---nightly-2025-09-23/include/clang -O3 -DNDEBUG -DLEAN_EXPORTING",
+   ".> /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2/bin/clang -c -o /home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c.o.export /home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c -I /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2/include -fstack-clash-protection -fdata-sections -ffunction-sections -fPIC -fvisibility=hidden -Wno-unused-command-line-argument --sysroot /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2 -nostdinc -isystem /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2/include/clang -O3 -DNDEBUG -DLEAN_EXPORTING",
    "level": "trace"}],
  "inputs":
  [["ServerPlugin:c",
    [["/home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c",
-     "15506186971075920533"],
-    ["Lean 4.25.0, commit 0807f73171ca8f765c11ef37d69fd95e6613a878",
-     "12253151075814282780"]]],
-  ["Lean 4.25.0, commit 0807f73171ca8f765c11ef37d69fd95e6613a878",
-   "12253151075814282780"],
-  ["traceArgs: #[-O3, -DNDEBUG, -DLEAN_EXPORTING]", "13974588697068907418"],
-  ["x86_64-unknown-linux-gnu", "6026072021563112488"]],
- "depHash": "4693402286653599543"}
+     "1d0a0fc43721a14d"],
+    ["Lean 4.29.0, commit 83e54b65b65d1d3ce31d99d820a7bd5f3e219295",
+     "e77748eb16099172"]]],
+  ["Lean 4.29.0, commit 83e54b65b65d1d3ce31d99d820a7bd5f3e219295",
+   "e77748eb16099172"],
+  ["traceArgs: #[-O3, -DNDEBUG, -DLEAN_EXPORTING]", "c1efb66122fb2b9a"],
+  ["x86_64-unknown-linux-gnu", "53a0e8937c307c28"]],
+ "depHash": "73de45abc05eaedb"}

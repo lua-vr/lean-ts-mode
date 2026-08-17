@@ -75,7 +75,8 @@ of the parent project."
       (if (string-match "\\`\\(.*/toolchains/[^/]*/src/lean\\)/.*\\'" initial)
           (setq root (match-string 1 initial))
         (setq root (locate-dominating-file initial "lean-toolchain"))
-        (while-let ((_   (string-match ".lake/packages/[^/]+\\'" root))
+        (while-let ((_   root)
+                    (_   (string-match ".lake/packages/[^/]+\\'" root))
                     (dir (directory-file-name root))
                     (new (locate-dominating-file dir "lean-toolchain")))
           ;; We found a toolchain file, but it belongs to a package.
@@ -111,6 +112,7 @@ Invokes `lean-ts-mode-hook'."
               comment-padding 1
               comment-use-syntax t
               indent-tabs-mode nil)
+  (visual-line-mode)
 
   (when lean-ts-inhibit-eglot-logs
     (setq-local eglot-events-buffer-config '(:size 0)))
@@ -121,11 +123,13 @@ Invokes `lean-ts-mode-hook'."
   (require 'lean-ts-input)
   (set-input-method "Lean")
   (add-hook 'eldoc-documentation-functions #'lean-ts-infoview--send-location 'append t)
+  (add-hook 'flymake-diagnostic-functions #'my-lean-flymake-backend nil t)
 
-  (setq treesit-primary-parser (treesit-parser-create 'lean))
-  (setq-local treesit-font-lock-settings lean-ts-font-lock)
-  (setq-local treesit-font-lock-feature-list '((comment)))
-  (treesit-major-mode-setup))
+  ;; (setq treesit-primary-parser (treesit-parser-create 'lean))
+  ;; (setq-local treesit-font-lock-settings lean-ts-font-lock)
+  ;; (setq-local treesit-font-lock-feature-list '((comment)))
+  ;; (treesit-major-mode-setup)
+  )
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.lean\\'" . lean-ts-mode))

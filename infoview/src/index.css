@@ -2,14 +2,12 @@
   --mono-family: 'Victor Mono';
   --mono-weight: 500;
   --sans-family: 'IBM Plex Sans';
-  --background: #fbf7f0;
-  --foreground: #000;
 }
 
 body {
   margin: 10;
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--default-fg);
+  background: var(--default-bg);
   font-family: var(--sans-family), sans-serif;
 }
 
@@ -19,8 +17,8 @@ body {
 }
 
 .tooltip {
-  background: var(--background);
-  border-color: var(--foreground);
+  background: var(--default-bg);
+  border-color: var(--default-fg);
   padding: 4px 8px;
   box-shadow: 1px 1px 5px #0002;
   border-radius: 4px;
@@ -29,4 +27,59 @@ body {
   max-width: calc(70%);
   box-sizing: border-box;
   max-height: fit-content !important;
+}
+
+* {
+  --default-fg: #202020;
+  --default-bg: #ffffff;
+  --error-fg: #e00033;
+  --warning-fg: #b6532f;
+  --success-fg: #217a3c;
+  --highlight-fg: #202020;
+  --highlight-bg: #aaeccf;
+  --diff-added-fg: #005000;
+  --diff-added-bg: #d0f0d0;
+  --diff-changed-fg: #553d00;
+  --diff-changed-bg: #f4e8bd;
+  --diff-removed-fg: #8f1313;
+  --diff-removed-bg: #ffd8d5;
+}
+
+.error {
+  foreground: var(--error-fg);
+  background: var(--error-bg);
+}
+
+.warning {
+  foreground: var(--warning-fg);
+  background: var(--warning-bg);
+}
+
+.information {
+  foreground: var(--success-fg);
+  background: var(--success-bg);
+}
+
+.highlighted-text {
+  foreground: var(--highlight-fg);
+  background: var(--highlight-bg);
+}
+
+.inserted-text {
+  foreground: var(--diff-added-fg);
+  background: var(--diff-added-bg);
+}
+
+.modified-text {
+  foreground: var(--diff-changed-fg);
+  background: var(--diff-changed-bg);
+}
+
+.removed-text {
+  foreground: var(--diff-removed-fg);
+  background: var(--diff-removed-bg);
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
 }

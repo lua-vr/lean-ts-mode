@@ -1,4 +1,5 @@
 {"plugins": [],
+ "package": "plugin",
  "options": {},
  "name": "ServerPlugin",
  "isModule": false,

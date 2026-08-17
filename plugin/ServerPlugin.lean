@@ -4,30 +4,34 @@ import Lean.Elab.Declaration
 
 open Lean Server RequestM Lsp Elab
 
-partial def handleDocumentSymbol (_ : DocumentSymbolParams) (p : RequestTask DocumentSymbolResult)
+open Elab in
+partial def handleDocumentSymbol (_ : DocumentSymbolParams)
     : RequestM (RequestTask DocumentSymbolResult) := do
-  p.cancel
   let doc ← readDoc
   -- bad: we have to wait on elaboration of the entire file before we can report document symbols
   let t := doc.cmdSnaps.waitAll
   mapTaskCostly t fun (snaps, _) => do
     let syms := snaps.map (·.infoTree) |> toDocumentSymbols doc.meta.text #[]
-    return { syms := syms }
+    return { syms }
 where
-  mkLevel text syms its up range (id : Option (TSyntax `ident)) :=
+  mkLevel text syms its up range
+      (id : Option (TSyntax `ident)) :=
+    let name := id.map (·.getId.componentsRev) |>.getD [`«»] 
+    let name := name.foldr (fun x y => y ++ x) Name.anonymous
     let up stop its children :=
+      let range := {range with stop}
       let sym := DocumentSymbol.mk {
-        name := id.elim "<section>" (·.getId.toString)
+        name := if name == `«» then "<section>" else name.toString
         kind := .namespace
-        range := {range with stop}.toLspRange text
-        selectionRange := id.elim range (·.raw.getRange?.get!) |>.toLspRange text
+        range := range.toLspRange text
+        selectionRange := id.bind (·.raw.getRange?) |>.getD range |>.toLspRange text
         children? := .some children
       }
       toDocumentSymbols text (syms.push sym) its up
     toDocumentSymbols text #[] its up
 
   toDocumentSymbols (text : FileMap) (syms : Array DocumentSymbol) (its : List InfoTree)
-      (up : String.Pos → List InfoTree → Array DocumentSymbol → Array DocumentSymbol := λ _ _ a ↦ a) :
+      (up : String.Pos.Raw → List InfoTree → Array DocumentSymbol → Array DocumentSymbol := λ _ _ a ↦ a) :
       Array DocumentSymbol :=
     match its with
     | it :: its =>
@@ -37,7 +41,7 @@ where
         let range := stx.getRange?.getD ⟨0,0⟩
         match elaborator with
         | ``Command.elabNamespace =>
-          if let `(namespace $id) := stx then 
+          if let `(namespace $id) := stx then
             return mkLevel text syms its up range id
         | ``Command.elabSection =>
           if let `($_:sectionHeader section $(id)?) := stx then
@@ -47,8 +51,7 @@ where
         | ``Command.elabDeclaration =>
           if let some stxRange := stx.getRange? then
             let (name, selection) := match stx with
-              | `($_:declModifiers $_:attrKind instance $[$np:namedPrio]? $[$id$[.{$ls,*}]?]?
-                    $sig:declSig $_) =>
+              | `($_:declModifiers $_:attrKind instance $[$np:namedPrio]? $[$id$[.{$ls,*}]?]? $sig:declSig $_) =>
                 ((·.getId.toString) <$> id |>.getD s!"instance {sig.raw.reprint.getD ""}", id.map (·.raw) |>.getD sig)
               | _ =>
                 match stx.getArg 1 |>.getArg 1 with
@@ -68,7 +71,7 @@ where
         toDocumentSymbols text syms (children.toList ++ its) up
       | .node _ children => toDocumentSymbols text syms (children.toList ++ its) up
       | .hole _ => toDocumentSymbols text syms its up
-    | [] => up text.source.endPos [] syms
+    | [] => up text.source.rawEndPos [] syms
 
 deriving instance FromJson for DocumentSymbol
 deriving instance FromJson for DocumentSymbolResult
@@ -78,4 +81,4 @@ builtin_initialize
     "textDocument/documentSymbol"
     DocumentSymbolParams
     DocumentSymbolResult
-    handleDocumentSymbol
+    (fun a _ => handleDocumentSymbol a)
