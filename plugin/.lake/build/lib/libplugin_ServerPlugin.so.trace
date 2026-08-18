@@ -1,17 +1,17 @@
 {"synthetic": false,
  "schemaVersion": "2025-09-10",
- "outputs": "5e343444b248cdb0.so",
+ "outputs": "556c17a2e3047ebd.so",
  "log":
  [{"message":
-   ".> /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2/bin/clang -shared -o /home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/lib/libplugin_ServerPlugin.so /home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c.o.export -L /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2/lib/lean --sysroot /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2 -L /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2/lib -L /home/lua/.elan/toolchains/leanprover--lean4---v4.29.0-rc2/lib/glibc -lc -lc_nonshared -Wl,--as-needed -l:ld.so -Wl,--no-as-needed -lpthread_nonshared -Wl,--as-needed -Wl,-Bstatic -lgmp -lunwind -luv -Wl,-Bdynamic -Wl,--no-as-needed -fuse-ld=lld -Wl,-Bstatic -lc++ -lc++abi -Wl,-Bdynamic -Wl,--as-needed -lLake_shared -Wl,--no-as-needed -Wl,-Bsymbolic -Wl,--as-needed -lgmp -luv -lpthread -ldl -lrt -Wl,--no-as-needed -Wl,--gc-sections -lm -ldl -pthread",
+   ".> /home/lua/.elan/toolchains/leanprover--lean4---v4.33.0/bin/clang -shared -o /home/lua/.config/emacs/packages/lean-ts-mode/plugin/.lake/build/lib/libplugin_ServerPlugin.so @/home/lua/.config/emacs/packages/lean-ts-mode/plugin/.lake/build/lib/libplugin_ServerPlugin.so.rsp",
    "level": "trace"}],
  "inputs":
  [["linkObjs",
-   [["/home/lua/dados/projetos/codigo/emacs/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c.o.export",
-     "eba8c16befb9da3d"]]],
+   [["/home/lua/.config/emacs/packages/lean-ts-mode/plugin/.lake/build/ir/ServerPlugin.c.o.export",
+     "509cd3f9af5e580d"]]],
   ["linkLibs", "00000000000006bb"],
-  ["Lean 4.29.0, commit 83e54b65b65d1d3ce31d99d820a7bd5f3e219295",
-   "e77748eb16099172"],
   ["traceArgs: #[]", "00000000000006bb"],
+  ["Lean 4.33.0, commit d8b18978322de05a8f3dba51ef03cf5461676c17",
+   "3eca9d16ab6c877d"],
   ["x86_64-unknown-linux-gnu", "53a0e8937c307c28"]],
- "depHash": "9a1b244beaf7438a"}
+ "depHash": "d07bcc182338fc2f"}

@@ -1,3 +1,4 @@
+/* Font choices, independent of the theme colors below. */
 * {
   --mono-family: 'Victor Mono';
   --mono-weight: 500;
@@ -5,7 +6,7 @@
 }
 
 body {
-  margin: 10;
+  margin: 0;
   color: var(--default-fg);
   background: var(--default-bg);
   font-family: var(--sans-family), sans-serif;
@@ -16,10 +17,12 @@ body {
   font-weight: var(--mono-weight);
 }
 
+/* The rounded box every tooltip is wrapped in. It's a flex container (set
+   upstream) around a scrollable .tooltip-content child, which is also where
+   upstream puts the inner padding -- so we don't repeat padding here. */
 .tooltip {
   background: var(--default-bg);
   border-color: var(--default-fg);
-  padding: 4px 8px;
   box-shadow: 1px 1px 5px #0002;
   border-radius: 4px;
   border-width: 1px;
@@ -29,6 +32,7 @@ body {
   max-height: fit-content !important;
 }
 
+/* Theme colors, generated from the Emacs faces by theme.el. */
 * {
   --default-fg: #202020;
   --default-bg: #ffffff;

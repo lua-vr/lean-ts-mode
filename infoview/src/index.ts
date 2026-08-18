@@ -1,6 +1,9 @@
 import type { InfoviewApi } from '@leanprover/infoview-api';
 import { RPCEditorApi } from './api.ts';
 import './es-module-shims-options.js';
+// es-module-shims must stay pinned to 1.x (see package.json): 2.x revokes a
+// module's blob URL before the browser finishes importing it, which breaks
+// `importShim('@leanprover/infoview')` below with "Cannot find module 'blob:...'".
 import 'es-module-shims';
 
 import './index.css';

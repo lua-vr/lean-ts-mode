@@ -93,9 +93,9 @@
 ;; Setup Eglot
 (add-hook 'lean-ts-mode-hook #'eglot-ensure)
 (add-to-list 'eglot-server-programs
-             `(lean-ts-mode lean-ts-eglot-server "lake" "serve"))
-                            ;; ,@(when lean-ts-server-plugin-path
-                            ;;     (list "--" "--plugin" lean-ts-server-plugin-path))))
+             `(lean-ts-mode lean-ts-eglot-server "lake" "serve"
+                            ,@(when lean-ts-server-plugin-path
+                                (list "--" "--plugin" lean-ts-server-plugin-path))))
 
 (add-to-list 'eglot-semantic-token-types "leanSorryLike")
 

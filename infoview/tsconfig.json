@@ -2,6 +2,7 @@
   "compilerOptions": {
     "lib": ["DOM", "ES2020"],
     "target": "ES2020",
+    "types": ["@rsbuild/core/types"],
     "noEmit": true,
     "skipLibCheck": true,
     "useDefineForClassFields": true,

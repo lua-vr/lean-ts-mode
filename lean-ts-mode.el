@@ -42,8 +42,9 @@
   :prefix "lean-ts-"
   :group 'languages)
 
-(defvar lean-ts-mode-map (make-sparse-keymap)
-  "Keymap used in Lean mode.")
+(defvar-keymap lean-ts-mode-map
+  :doc "Keymap used in Lean mode."
+  "C-c x" #'lean-ts-restart-file)
 
 (defvar lean-ts-inhibit-eglot-logs t
   "Disable Eglot logging in Lean buffers.
@@ -51,15 +52,63 @@
 Since the Lean server is extremely chatty, you should leave it at t for a
 big performance improvement unless you are debugging the server.")
 
+(defvar lean-ts--definition-keywords-regexp
+  (rx bos (or "def" "theorem" "lemma" "abbrev" "instance" "structure"
+              "class" "inductive" "coinductive" "axiom" "example" "opaque")
+      eos)
+  "Regexp matching keywords whose following identifier names a definition.")
+
+(defvar lean-ts-font-lock-feature-list
+  '((comment definition)
+    (keyword string)
+    (attribute constant error number type)
+    (delimiter variable))
+  "The tree-sitter font lock feature list for `lean-ts-mode'.")
+
 (defvar lean-ts-font-lock
   (treesit-font-lock-rules
    :default-language 'lean
 
    :feature 'comment
-   `([(comment) (line_comment)]
-     @font-lock-comment-face
-     [(cmd_module_doc) (documentation)]
-     @font-lock-doc-face))
+   '((line_comment) @font-lock-comment-face
+     (block_comment) @font-lock-comment-face
+     (doc_comment) @font-lock-doc-face
+     (mod_doc_comment) @font-lock-doc-face)
+
+   :feature 'definition
+   `(((keyword) @_definition-keyword
+      :anchor
+      (identifier) @font-lock-function-name-face
+      (:match? @_definition-keyword ,lean-ts--definition-keywords-regexp)))
+
+   :feature 'keyword
+   '((keyword) @font-lock-keyword-face
+     (modifier) @font-lock-keyword-face
+     (trace_macro) @font-lock-keyword-face)
+
+   :feature 'string
+   '((string) @font-lock-string-face)
+
+   :feature 'attribute
+   '((attribute) @font-lock-preprocessor-face)
+
+   :feature 'constant
+   '((char) @font-lock-constant-face)
+
+   :feature 'error
+   '((invalid) @font-lock-warning-face)
+
+   :feature 'number
+   '((number) @font-lock-number-face)
+
+   :feature 'type
+   '((storage_type) @font-lock-type-face)
+
+   :feature 'delimiter
+   '((punctuation) @font-lock-delimiter-face)
+
+   :feature 'variable
+   '((identifier) @font-lock-variable-use-face))
   "The tree-sitter font lock settings for lean.")
 
 (defun lean-ts--eglot-project (initial)
@@ -102,15 +151,17 @@ Invokes `lean-ts-mode-hook'."
   :syntax-table lean-ts-mode-syntax-table
   :group 'lean
 
+
   ;; Misc
   (setq-local tab-width 2
               standard-indent 2
-              comment-start "--"
+              comment-start "/- "
               comment-start-skip "[-/]-[ \t]*"
-              comment-end ""
+              comment-end " -/"
               comment-end-skip "[ \t]*\\(-/\\|\\s>\\)"
               comment-padding 1
               comment-use-syntax t
+              comment-style 'multi-line
               indent-tabs-mode nil)
   (visual-line-mode)
 
@@ -125,11 +176,10 @@ Invokes `lean-ts-mode-hook'."
   (add-hook 'eldoc-documentation-functions #'lean-ts-infoview--send-location 'append t)
   (add-hook 'flymake-diagnostic-functions #'my-lean-flymake-backend nil t)
 
-  ;; (setq treesit-primary-parser (treesit-parser-create 'lean))
-  ;; (setq-local treesit-font-lock-settings lean-ts-font-lock)
-  ;; (setq-local treesit-font-lock-feature-list '((comment)))
-  ;; (treesit-major-mode-setup)
-  )
+  (setq treesit-primary-parser (treesit-parser-create 'lean))
+  (setq-local treesit-font-lock-settings lean-ts-font-lock)
+  (setq-local treesit-font-lock-feature-list lean-ts-font-lock-feature-list)
+  (treesit-major-mode-setup))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.lean\\'" . lean-ts-mode))
